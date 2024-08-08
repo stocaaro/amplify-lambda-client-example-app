@@ -6,10 +6,14 @@ const client = generateClient<Schema>();
 
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [todoCount, setTodoCount] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
+      next: (data) => {
+        setTodos([...data.items])
+        updateCount();
+      }
     });
   }, []);
 
@@ -17,13 +21,25 @@ function App() {
     client.models.Todo.create({ content: window.prompt("Todo content") });
   }
 
+  function deleteTodo(id: string) {
+    client.models.Todo.delete({ id })
+  }
+
+  async function updateCount() {
+    const count = (await client.queries.todoCount({})).data
+    setTodoCount(count === null ? undefined : count)
+  }
+
   return (
     <main>
-      <h1>My todos</h1>
+      <h1>My todos ({todoCount || 'Unknown'})</h1>
+      <button onClick={updateCount}>
+          Update Count
+        </button>
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
+          <li onClick={() => deleteTodo(todo.id)} key={todo.id}>{todo.content}</li>
         ))}
       </ul>
       <div>
