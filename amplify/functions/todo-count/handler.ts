@@ -2,8 +2,8 @@ import type { Handler } from "aws-lambda";
 import { lambdaConfig } from "../../../lambda-client-utils/client";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
-import { env } from "$amplify/env/invoke-api";
 import type { Schema } from "../../data/resource";
+import { env } from "$amplify/env/todo-count";
 import modelIntrospection from "$amplify/model-introspection.json";
 
 const { resourceConfig, libraryOptions } = lambdaConfig(
