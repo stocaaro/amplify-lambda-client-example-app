@@ -28,7 +28,10 @@ export const schema = a
       .handler(a.handler.function(todoCountAlt))
       .authorization((allow) => [allow.publicApiKey()]),
   })
-  .authorization((allow) => allow.resource(todoCount));
+  .authorization((allow) => [
+    allow.resource(todoCount),
+    allow.resource(todoCountAlt),
+  ]);
 
 export type Schema = ClientSchema<typeof schema>;
 
