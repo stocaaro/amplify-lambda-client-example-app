@@ -1,13 +1,14 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 import { generateModelIntrospectionSchema } from "../../lambda-client-utils/build";
 import { todoCount } from "../functions/todo-count/resource";
+import { todoCount as todoCountAlt } from "../functions/todo-count-alt/resource";
 /*== STEP 1 ===============================================================
 The section below creates a Todo database table with a "content" field. Try
 adding a new "isDone" field as a boolean. The authorization rule below
 specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
-const schema = a
+export const schema = a
   .schema({
     Todo: a
       .model({
@@ -19,6 +20,12 @@ const schema = a
       .arguments({})
       .returns(a.integer())
       .handler(a.handler.function(todoCount))
+      .authorization((allow) => [allow.publicApiKey()]),
+    todoCountAlt: a
+      .query()
+      .arguments({})
+      .returns(a.integer())
+      .handler(a.handler.function(todoCountAlt))
       .authorization((allow) => [allow.publicApiKey()]),
   })
   .authorization((allow) => allow.resource(todoCount));

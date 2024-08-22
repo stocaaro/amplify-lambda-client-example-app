@@ -7,6 +7,7 @@ const client = generateClient<Schema>();
 function App() {
   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
   const [todoCount, setTodoCount] = useState<number | undefined>(undefined);
+  const [todoCountAlt, setTodoCountAlt] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     client.models.Todo.observeQuery().subscribe({
@@ -26,14 +27,26 @@ function App() {
   }
 
   async function updateCount() {
+    console.time('updateCount');
     const count = (await client.queries.todoCount({})).data
+    console.timeEnd('updateCount');
     setTodoCount(count === null ? undefined : count)
+  }
+
+  async function updateCountAlt() {
+    console.time('updateCountAlt');
+    const count = (await client.queries.todoCount({})).data
+    console.timeEnd('updateCountAlt');
+    setTodoCountAlt(count === null ? undefined : count)
   }
 
   return (
     <main>
-      <h1>My todos ({todoCount || 'Unknown'})</h1>
-      <button onClick={updateCount}>
+      <h1>My todos ({todoCount || 'Unknown'}) ({todoCountAlt || 'Unknown'})</h1>
+      <button onClick={() => {
+        updateCount();
+        updateCountAlt();
+      }}>
           Update Count
         </button>
       <button onClick={createTodo}>+ new</button>
